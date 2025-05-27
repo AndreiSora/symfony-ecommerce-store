@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block header %}
+	<header
+		class="sticky-top bg-white shadow-sm">
+		<!-- Top Bar -->
+		<div class="container py-3">
+			<div
+				class="row align-items-center justify-content-between">
+				<!-- Logo -->
+				<div class="col-6 col-sm-4 col-lg-2">
+					<a href="/">
+						<img src="https://www.codewithfaraz.com/favicon.ico" alt="logo" class="img-fluid">
+					</a>
+				</div>
+
+				<!-- Search Bar (hidden on xs and sm) -->
+				<div class="d-none d-lg-block col-lg-6">
+					<form class="d-flex align-items-center border rounded-2 px-3 border-dark-subtle" id="search-form">
+						<input type="text" class="form-control border-0 bg-transparent" placeholder="Search for a product">
+						<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewbox="0 0 24 24">
+							<path fill="currentColor" d="M21.71 20.29L18 16.61A9 9 0 1 0 16.61 18l3.68 3.68a1 1 0 0 0 1.42 0a1 1 0 0 0 0-1.39ZM11 18a7 7 0 1 1 7-7a7 7 0 0 1-7 7Z"></path>
+						</svg>
+					</form>
+				</div>
+
+				<!-- Icons + Menu toggle -->
+				<div class="col-6 col-sm-8 col-lg-4 d-flex justify-content-end align-items-center">
+					<a href="#" class="mx-2 d-none d-sm-inline">
+						<iconify-icon icon="healthicons:person" class="fs-4"></iconify-icon>
+					</a>
+					<a href="#" class="mx-2 d-none d-sm-inline">
+						<iconify-icon icon="mdi:heart" class="fs-4"></iconify-icon>
+					</a>
+					<a href="{{ path('cart_view') }}" class="mx-2 position-relative">
+						<iconify-icon icon="mdi:cart" class="fs-4"></iconify-icon>
+						<span id="cart-badge" class="position-absolute translate-middle badge rounded-circle bg-primary pt-2 top-0 start-100">
+							{{ cartItemCount }}
+						</span>
+					</a>
+					<!-- Mobile menu toggle button -->
+					<button class="navbar-toggler ms-3 d-lg-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+				</div>
+			</div>
+		</div>
+
+		<!-- Navigation -->
+		<div class="container bg-white">
+			<nav class="navbar navbar-expand-lg">
+				<div
+					class="container">
+
+					<!-- Toggler for mobile -->
+					<button class="navbar-toggler ms-auto" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasNavbar" aria-controls="offcanvasNavbar">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+
+					<!-- Offcanvas Menu -->
+					<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasNavbar" aria-labelledby="offcanvasNavbarLabel">
+						<div class="offcanvas-header">
+							<h5 class="offcanvas-title" id="offcanvasNavbarLabel">Menu</h5>
+							<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+						</div>
+
+						<div
+							class="offcanvas-body justify-content-between">
+							<!-- Navigation Links -->
+							<ul class="navbar-nav menu-list list-unstyled d-flex flex-column flex-lg-row gap-md-3 mb-0">
+								<li class="nav-item">
+									<a href="{{ path('homepage') }}" class="nav-link active">Home</a>
+								</li>
+								{% for category in categories %}
+									<li class="nav-item">
+										<a href="{{ path('category_view', { id: category.id }) }}" class="nav-link active">{{ category.name }}</a>
+									</li>
+								{% endfor %}
+							</ul>
+						</div>
+					</div>
+
+				</div>
+			</nav>
+		</div>
+	</header>
+{% endblock %}
+
+{% block body %}{% endblock %}

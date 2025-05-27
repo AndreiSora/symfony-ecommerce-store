@@ -1,0 +1,111 @@
+{% extends 'header.html.twig' %}
+
+{% block body %}
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+
+	<div class="container py-5">
+		<h2 class="text-center mb-4">{{ currentCategory.name }}</h2>
+
+		<div
+			class="row">
+			<!-- Sidebar Filters -->
+			<aside class="col-lg-3 mb-4">
+				<div class="card-category p-3 shadow">
+					<div class="d-flex justify-content-between align-items-center mb-3">
+						<h5 class="mb-0">Filters</h5>
+						{% if appliedFilters is not empty %}
+							<a href="{{ path('category_view', { id: currentCategory.id }) }}" class="btn btn-sm btn-outline-secondary">
+								Clear All
+							</a>
+						{% endif %}
+					</div>
+
+					<form method="get" action="{{ path('category_view', {'id': currentCategory.id}) }}">
+						{% for attrName, attrValues in attributes %}
+							{% set queryKey = attrName|lower %}
+							{% set selectedValues = [] %}
+							{% if appliedFilters[queryKey] is defined %}
+								{% if appliedFilters[queryKey] is iterable %}
+									{% set selectedValues = appliedFilters[queryKey] %}
+								{% else %}
+									{% set selectedValues = [appliedFilters[queryKey]] %}
+								{% endif %}
+							{% endif %}
+
+							<div class="mb-3">
+								<label class="form-label fw-bold">{{ attrName }}</label>
+								{% for value in attrValues %}
+									<div class="form-check">
+										<input class="form-check-input" type="checkbox" name="{{ queryKey }}[]" value="{{ value }}" {% if value in selectedValues %} checked {% endif %}>
+										<label class="form-check-label">{{ value }}</label>
+									</div>
+								{% endfor %}
+							</div>
+						{% endfor %}
+
+						<button type="submit" class="btn btn-primary w-100">Apply Filters</button>
+					</form>
+				</div>
+			</aside>
+
+			<!-- Product Grid -->
+			<section class="col-lg-9">
+				{% if products is not empty %}
+					<div class="row g-4">
+						{% for product in products %}
+							{% if product.salable %}
+								<div class="col-12 col-sm-6 col-lg-4 d-flex">
+									<div class="card h-100 shadow-sm flex-fill">
+										<a href="{{ path('product_view', { id: product.id }) }}">
+											{% set firstImage = product.images|first %}
+											<img src="{{ asset(firstImage ? 'uploads/products/images/' ~ firstImage.imageName : 'images/generic_thumbnail.jpg') }}" class="card-img-top img-fluid" alt="{{ product.name }}">
+										</a>
+
+										<div class="card-body d-flex flex-column">
+											<a href="{{ path('product_view', { id: product.id }) }}" class="text-decoration-none text-dark">
+												<h6 class="card-title">{{ product.name }}</h6>
+											</a>
+
+											<small class="text-muted mb-2">
+												{{ product.stock > 0 ? 'In stock' : 'Out of stock' }}
+											</small>
+
+											<div class="mt-auto">
+												{% if product.specialPrice %}
+													{% set priceParts = product.price|number_format(2, ',', '.')|split(',') %}
+													{% set specialPriceParts = product.specialPrice|number_format(2, ',', '.')|split(',') %}
+													<p class="mb-1">
+														<span class="text-muted text-decoration-line-through">
+															${{ priceParts[0] }}<sup>{{ priceParts[1] }}</sup>
+														</span><br>
+														<span class="fw-bold text-danger">
+															${{ specialPriceParts[0] }}<sup>{{ specialPriceParts[1] }}</sup>
+														</span>
+													</p>
+												{% else %}
+													{% set priceParts = product.price|number_format(2, ',', '.')|split(',') %}
+													<p class="fw-bold mb-1">
+														${{ priceParts[0] }}<sup>{{ priceParts[1] }}</sup>
+													</p>
+												{% endif %}
+
+												{% if product.stock > 0 %}
+													<button class="btn btn-outline-primary btn-sm w-100 mt-2 add-to-cart-btn" data-product-id="{{ product.id }}">
+														<i class="bi bi-cart-plus me-1"></i>
+														Add to Cart
+													</button>
+												{% endif %}
+											</div>
+										</div>
+									</div>
+								</div>
+							{% endif %}
+						{% endfor %}
+					</div>
+				{% else %}
+					<div class="alert alert-info">No products found with selected filters.</div>
+				{% endif %}
+			</section>
+		</div>
+	</div>
+{% endblock %}

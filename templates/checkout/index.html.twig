@@ -1,0 +1,217 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	<div class="container py-5">
+		<h1 class="mb-5 text-center">Checkout</h1>
+		<div
+			class="row g-4">
+			{# Left: Billing & Shipping Form #}
+			<div class="col-lg-8">
+				<div class="mb-4">
+					<a href="{{ path('homepage') }}" class="btn btn-outline-secondary">
+						<i class="bi bi-arrow-left"></i>
+						Continue Shopping
+					</a>
+				</div>
+				<div class="mb-4">
+					<div class="card-body">
+						<h5 class="card-title mb-4">Billing & Shipping Details</h5>
+						<form method="post" action="{{ path('checkout_process') }}">
+							<div
+								class="row g-3">
+								{# Address fields #}
+								<div class="col-md-6">
+									<label for="firstName" class="form-label">First name
+										<span class="text-danger">*</span>
+									</label>
+									<input type="text" class="form-control" id="firstName" name="firstName" required>
+								</div>
+								<div class="col-md-6">
+									<label for="lastName" class="form-label">Last name
+										<span class="text-danger">*</span>
+									</label>
+									<input type="text" class="form-control" id="lastName" name="lastName" required>
+								</div>
+								<div class="col-12">
+									<label for="email" class="form-label">Email address
+										<span class="text-danger">*</span>
+									</label>
+									<input type="email" class="form-control" id="email" name="email" required>
+								</div>
+								<div class="col-md-6">
+									<label for="phone" class="form-label">Phone Number
+										<span class="text-danger">*</span>
+									</label>
+									<input type="tel" class="form-control" id="phone" name="phone" required>
+								</div>
+								<div class="col-md-3">
+									<label for="country" class="form-label">Country
+										<span class="text-danger">*</span>
+									</label>
+									<select id="country" name="country" class="country-select form-select" required>
+										<option value="">Choose...</option>
+										{% for code, name in countries %}
+											<option value="{{ code }}">{{ name }}</option>
+										{% endfor %}
+									</select>
+								</div>
+								<div class="col-md-3">
+									<label for="zip" class="form-label">Zip / Postal code
+									<span class="text-danger">*</span></label>
+									<input type="text" class="form-control" id="zip" name="zip" required>
+								</div>
+								<div class="col-md-6">
+									<label for="county" class="form-label">Region</label>
+									<input type="text" class="form-control" id="county" name="county">
+								</div>
+								<div class="col-md-6">
+									<label for="city" class="form-label">City
+										<span class="text-danger">*</span>
+									</label>
+									<input type="text" class="form-control" id="city" name="city" required>
+								</div>
+								<div class="col-12">
+									<label for="streetAddress" class="form-label">Street address
+										<span class="text-danger">*</span>
+									</label>
+									<input type="text" class="form-control" id="streetAddress" name="streetAddress" required>
+								</div>
+
+								<hr
+								class="my-4">
+
+								{# Payment methods #}
+								<h5 class="card-title mb-3">Payment Method</h5>
+								{% for method in paymentMethods %}
+									<label>
+										<input type="radio" name="paymentMethod" value="{{ method.id }}" {% if loop.first %} checked {% endif %}>
+										{{ method.name }}
+									</label>
+								{% endfor %}
+
+								<hr
+								class="my-4">
+
+								{# Shipping methods #}
+								<h5 class="card-title mb-3">Shipping Method</h5>
+								{% for method in shippingMethods %}
+									<label>
+										<input type="radio" name="shippingMethod" value="{{ method.id }}" {% if loop.first %} checked {% endif %}>
+										{{ method.name }}
+										- ${{ method.price }}
+									</label>
+								{% endfor %}
+
+								<div class="mt-4">
+									<button class="btn btn-primary w-100 mb-3" type="submit">
+										Place Order
+									</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+
+			<!-- Right: Order Summary -->
+			<div
+				class="col-lg-4">
+				{# Calculate subtotal before using it #}
+				{% set subtotal = 0 %}
+				{% for item in cart %}
+					{% set product = item.product %}
+					{% set qty = item.quantity %}
+					{% if product.specialPrice %}
+						{% set productLineTotal = product.specialPrice * qty %}
+					{% else %}
+						{% set productLineTotal = product.price * qty %}
+					{% endif %}
+					{% set subtotal = subtotal + productLineTotal %}
+				{% endfor %}
+
+				<div class="card shadow-sm">
+					<div class="card-body ms-6" id="order-summary" data-subtotal="{{ subtotal|number_format(2, '.', '') }}" data-shipping="{{ shipping|number_format(2, '.', '') }}">
+						<h5 class="card-title mb-4">Order Summary</h5>
+
+						{# Loop again to display items #}
+						{% for item in cart %}
+							{% set product = item.product %}
+							{% set qty = item.quantity %}
+							{% if product.specialPrice %}
+								{% set productLineTotal = product.specialPrice * qty %}
+							{% else %}
+								{% set productLineTotal = product.price * qty %}
+							{% endif %}
+							{% set productLineTotalFormatted = (productLineTotal|number_format(2, ',', '.')|split(',')) %}
+
+							<div
+								class="d-flex mb-4 align-items-center">
+								<!-- Image -->
+								<div class="checkout-img">
+									{% set firstImage = item.product.images|first %}
+									{% if firstImage %}
+										<img src="{{ asset('uploads/products/images/' ~ firstImage.imageName) }}" width="64" class="rounded" alt="{{ item.product.name }}">
+									{% else %}
+										<img src="{{ asset('images/generic_thumbnail.jpg') }}" width="64" class="rounded" alt="{{ item.product.name }}">
+									{% endif %}
+								</div>
+
+								<!-- Product Name & Quantity -->
+								<div class="ms-3 checkout-product">
+									<h6 class="mb-1">{{ item.product.name }}</h6>
+									<small class="text-muted">Qty:
+										{{ item.quantity }}</small>
+								</div>
+
+								<!-- Price -->
+								<div class="text-end checkout-price">
+									<span>
+										${{ productLineTotalFormatted[0] }}
+										<sup>{{ productLineTotalFormatted[1] }}</sup>
+									</span>
+								</div>
+							</div>
+						{% endfor %}
+
+						<hr>
+						<div class="d-flex justify-content-between mb-2">
+							<span>Subtotal</span>
+							{% set subtotalLine = (subtotal|number_format(2, ',', '.')|split(',')) %}
+							<span>
+								${{ subtotalLine[0] }}
+								<sup>{{ subtotalLine[1] }}</sup>
+							</span>
+						</div>
+						<div class="d-flex justify-content-between mb-2">
+							<span>Shipping</span>
+							{% set shippingLine = (shipping|number_format(2, ',', '.')|split(',')) %}
+							<span id="shipping-amount">
+								${{ shippingLine[0] }}
+								<sup>{{ shippingLine[1] }}</sup>
+							</span>
+						</div>
+
+						<hr>
+
+						<div class="d-flex justify-content-between mb-3">
+							<strong>Total</strong>
+							{% set totalsLine = ((subtotal + shipping)|number_format(2, ',', '.')|split(',')) %}
+							<strong id="total-amount">
+								${{ totalsLine[0] }}
+								<sup>{{ totalsLine[1] }}</sup>
+							</strong>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script>
+		window.shippingPrices = {
+			{% for method in shippingMethods %}
+				"{{ method.id }}": {{ method.price }},
+			{% endfor %}
+		};
+	</script>
+{% endblock %}

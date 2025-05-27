@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Order Confirmation{% endblock %}
+
+{% block body %}
+<div class="container py-5 text-center">
+    <div class="mb-4">
+        <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" fill="green" class="bi bi-check-circle" viewBox="0 0 16 16">
+            <path d="M15.854 7.146a.5.5 0 0 0-.708-.708L7 14.293 2.854 10.146a.5.5 0 1 0-.708.708l4.5 4.5a.5.5 0 0 0 .708 0l9-9z"/>
+            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+        </svg>
+    </div>
+    <h1 class="mb-3">Thank you for your order #{{ order.id }}!</h1>
+    <p class="lead mb-4">Your order has been successfully placed. You will receive an email confirmation shortly.</p>
+    
+    <a href="{{ path('homepage') }}" class="btn btn-outline-primary">Continue Shopping</a>
+</div>
+{% endblock %}

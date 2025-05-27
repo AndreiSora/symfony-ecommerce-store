@@ -1,3 +1,264 @@
 body {
-    background-color: skyblue;
+  font-family: 'Poppins', sans-serif;
+}
+
+.form-control {
+  text-transform: capitalize;
+  padding: 1rem 0rem 1rem 1rem;
+}
+
+.form-control:focus {
+  outline: 0;
+  box-shadow: none;
+}
+
+a {
+  color: #333;
+  text-decoration: none;
+}
+
+@media screen and (max-width: 991px) {
+
+  .offcanvas-body .nav-item {
+    font-weight: 700;
+    border-bottom: 1px solid #d1d1d1;
+  }
+
+  .offcanvas-body .filter-categories {
+    width: 100%;
+    margin-bottom: 20px !important;
+    border: 1px solid #d1d1d1 !important;
+    padding: 14px;
+    border-radius: 8px;
+  }
+
+  .dropdown-menu {
+    padding: 0;
+    border: none;
+    line-height: 1.4;
+    font-size: 0.9em;
+  }
+
+  .dropdown-menu a {
+    padding-left: 0;
+  }
+
+  .dropdown-toggle::after {
+    position: absolute;
+    right: 0;
+    top: 21px;
+  }
+
+  img {
+    width: 100px;
+  }
+}
+
+/* homepage carousel */
+.carousel-item img {
+  height: 400px;
+  object-fit: cover;
+}
+
+/* navbar */
+.navbar-container {
+  background-color: white;
+}
+
+/* discount carousel */
+.discount-carousel-item {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 15px;
+  justify-content: center;
+}
+
+.card {
+  width: 25rem;
+  flex: 0 0 auto;
+}
+
+.product-card img,
+.product-image {
+  width: 100%;
+  height: auto;
+  max-height: 280px; /* increased height for desktop */
+  object-fit: contain;
+  border-radius: 4px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 576px) {
+  .product-image {
+    max-height: 150px; /* keep smaller height on mobile */
+  }
+}
+
+.product-card {
+  border-radius: 15px;
+  overflow: hidden;
+  transition: box-shadow 0.3s;
+  border-radius: 15px;
+}
+
+.product-card:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.price {
+  font-size: 1rem;
+  color: #888;
+  text-decoration: line-through;
+}
+
+.special-price {
+  font-size: 1.2rem;
+  color: #e63946;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.card-img-top {
+  border-bottom: 1px solid #ddd;
+  object-fit: cover;
+}
+
+.sale-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background-color: #e63946;
+  color: #fff;
+  padding: 5px 15px;
+  font-weight: bold;
+  border-radius: 50px;
+  font-size: 0.8rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* category page */
+
+.card-category {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* product page */
+.tab-content {
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.nav-tabs .nav-link.active {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.product-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.spec-title {
+  font-size: 1.5rem;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+.spec-table {
+  width: 100%;
+  border-top: 1px solid #444;
+}
+
+.spec-table th,
+.spec-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #444;
+}
+
+.spec-table th {
+  width: 30%;
+}
+
+.quantity-input {
+  height: 40px;
+}
+
+.thumbnail-img {
+  object-fit: cover;
+  width: 100%;
+  height: 75px;
+  border: 2px solid transparent;
+  transition: border-color 0.2s;
+}
+
+.thumbnail-img:hover {
+  border-color: #007bff;
+}
+
+.out-of-stock {
+  pointer-events: none;
+}
+
+/* cart page */
+.cart-item img {
+  max-width: 100px;
+  height: auto;
+}
+
+.quantity-input {
+  width: 50px;
+}
+
+.cart-summary {
+  background-color: #f8f9fa;
+  border-radius: 10px;
+}
+
+/* checkout page */
+.country-select {
+  height: 58px;
+}
+
+form input,
+form textarea,
+form select {
+  text-transform: none !important;
+}
+
+/* listing page */
+.image-container {
+  width: 100%;
+  overflow: hidden;
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+  max-height: 400px;
+}
+
+.image-container img {
+  image-rendering: auto;
+  width: 100%;
+  height: auto;
+  max-height: 100%;
+  object-fit: cover;
+}
+
+.price-full {
+  font-size: 1.2rem;
+}
+
+.checkout-img {
+  flex: 0 0 64px;
+}
+
+.checkout-product {
+  flex: 1 1 auto;
+}
+
+.checkout-price {
+  flex: 0 0 auto;
+  min-width: 70px;
 }

@@ -1,0 +1,117 @@
+{% extends 'header.html.twig' %}
+
+{% block body %}
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+
+	<div class="container py-5">
+		<div class="row">
+			<!-- Product Images -->
+			<div class="col-md-6 mb-4">
+				<div class="card">
+					{% set firstImage = product.images|first %}
+					<img id="mainProductImage" src="{{ firstImage ? asset('uploads/products/images/' ~ firstImage.imageName) : asset('images/generic_thumbnail.jpg') }}" class="card-img-top" alt="{{ product.name }}" style="object-fit: contain; height: 400px; width: 100%;">
+
+					<div class="card-body">
+						<div class="row g-2">
+							{% for image in product.images %}
+								<div class="col-3">
+									<img src="{{ asset('uploads/products/images/' ~ image.imageName) }}" class="img-thumbnail" alt="{{ product.name }}" style="cursor:pointer; object-fit: cover; height: 75px; width: 100%;" onclick="document.getElementById('mainProductImage').src=this.src;">
+								</div>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Product Details -->
+			<div class="col-md-6">
+				<h1 class="h2 mb-3">{{ product.name }}</h1>
+				{% if product.specialPrice %}
+					<div class="mb-3">
+						{% set specialPriceParts = product.specialPrice|number_format(2, ',', '.')|split(',') %}
+						<span class="h4 fw-bold">
+							${{ specialPriceParts[0] }}<sup>{{ specialPriceParts[1] }}</sup>
+						</span>
+
+						{% set priceParts = product.price|number_format(2, ',', '.')|split(',') %}
+						<span class="price">
+							${{ priceParts[0] }}<sup>{{ priceParts[1] }}</sup>
+						</span>
+
+						<span class="badge bg-danger ms-2">{{ ((product.price - product.specialPrice) / product.price * 100) | number_format(0) }}%</span>
+					</div>
+				{% else %}
+					<div class="mb-3">
+						{% set priceParts = product.price|number_format(2, ',', '.')|split(',') %}
+						<span class="h4 me-2">
+							${{ priceParts[0] }}<sup>{{ priceParts[1] }}</sup>
+						</span>
+					</div>
+				{% endif %}
+
+				<p class="mb-4">{{ product.shortDescription }}</p>
+
+				{# stock #}
+				{% if product.stock > 0 %}
+					<div class="d-grid gap-2">
+						<a class="col-6 btn btn-primary add-to-cart-btn" data-product-id="{{ product.id }}">
+							<i class="bi bi-cart-plus"></i>
+							Add to Cart
+						</a>
+					</div>
+				{% else %}
+					<div class="col-6 btn border border-dark text-black bg-white out-of-stock">
+						We are sorry, this product is out of stock for now
+					</div>
+				{% endif %}
+
+				<!-- Additional Info -->
+				<div class="mt-4">
+					<div class="d-flex align-items-center mb-2">
+						<i class="fas fa-truck text-primary me-2"></i>
+						<span>Free shipping on orders over $50</span>
+					</div>
+					<div class="d-flex align-items-center mb-2">
+						<i class="fas fa-undo text-primary me-2"></i>
+						<span>30-day return policy</span>
+					</div>
+					<div class="d-flex align-items-center">
+						<i class="fas fa-shield-alt text-primary me-2"></i>
+						<span>2-year warranty</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	{# Product details tabs #}
+	<div class="container my-5">
+		<ul class="nav nav-tabs mb-4" role="tablist">
+			<li class="nav-item" role="presentation">
+				<button class="nav-link active" id="description-tab" data-bs-toggle="tab" data-bs-target="#description" role="tab">Description</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="specifications-tab" data-bs-toggle="tab" data-bs-target="#specifications" role="tab">Specifications</button>
+			</li>
+		</ul>
+
+		<div class="tab-content">
+			<div class="tab-pane fade show active" id="description" role="tabpanel">
+				<div class="product-title">{{ product.name }}</div>
+				<p>{{ product.description }}</p>
+			</div>
+
+			<div class="tab-pane fade" id="specifications" role="tabpanel">
+				<div class="spec-title">GENERAL SPECIFICATIONS</div>
+				{% for productAttribute in product.getProductAttributes %}
+					<table class="spec-table">
+						<tr>
+							<th>{{productAttribute.attribute}}</th>
+							<td>{{productAttribute.value}}</td>
+						</tr>
+					</table>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+{% endblock %}
