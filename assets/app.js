@@ -80,7 +80,7 @@ function setupCartQuantityButtons() {
 
 function setupPaymentToggle() {
     document.body.addEventListener('change', function (e) {
-        if (!e.target.matches('input[name="paymentMethod"]')) return;
+        if (!e.target.matches('input[name="checkout[paymentMethod]"]')) return;
 
         const creditFields = document.getElementById('credit-card-fields');
         if (creditFields) {
@@ -88,7 +88,7 @@ function setupPaymentToggle() {
         }
     });
 
-    const checked = document.querySelector('input[name="paymentMethod"]:checked');
+    const checked = document.querySelector('input[name="checkout[paymentMethod]"]:checked');
     if (checked?.value === 'credit_card') {
         const creditFields = document.getElementById('credit-card-fields');
         if (creditFields) creditFields.style.display = 'flex';
@@ -99,7 +99,7 @@ function setupShippingMethodToggle() {
     const shippingPrices = window.shippingPrices || {};
 
     document.body.addEventListener('change', function (e) {
-        if (!e.target.matches('input[name="shippingMethod"]')) return;
+        if (!e.target.matches('input[name="checkout[shippingMethod]"]')) return;
 
         const orderSummaryEl = document.getElementById('order-summary');
         const subtotal = parseFloat(orderSummaryEl?.dataset.subtotal || 0);
@@ -123,7 +123,7 @@ function setupShippingMethodToggle() {
     });
 
     // Trigger once on load if already selected
-    const selected = document.querySelector('input[name="shippingMethod"]:checked');
+    const selected = document.querySelector('input[name="checkout[shippingMethod]"]:checked');
     if (selected) {
         selected.dispatchEvent(new Event('change', { bubbles: true }));
     }

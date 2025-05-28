@@ -16,31 +16,46 @@ use App\Repository\ProductRepository;
 use App\Repository\PaymentMethodRepository;
 use App\Repository\ShippingMethodRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Form\CheckoutType;
 
 class CheckoutController extends AbstractController
 {
     #[Route('/checkout', name: 'checkout')]
-    public function index(CartService $cartService, PaymentMethodRepository $paymentMethodRepository, ShippingMethodRepository $shippingMethodRepository): Response
-    {
+    public function index(
+        Request $request,
+        CartService $cartService,
+        PaymentMethodRepository $paymentMethodRepository,
+        ShippingMethodRepository $shippingMethodRepository
+    ): Response {
+        $cart = $cartService->getCart();
+
+        // Calculate subtotal
+        $subtotal = 0;
+        foreach ($cart as $item) {
+            $price = $item['product']->getSpecialPrice() ?: $item['product']->getPrice();
+            $subtotal += $price * $item['quantity'];
+        }
+
+        $shipping = 5.00; // default, can be dynamic
+
+        $form = $this->createForm(CheckoutType::class, null, $this->getCheckoutFormOptions($paymentMethodRepository, $shippingMethodRepository));
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            return $this->redirectToRoute('checkout_process');
+        }
+
+        $countries = Countries::getNames();
         $paymentMethods = $paymentMethodRepository->findBy(['active' => true]);
         $shippingMethods = $shippingMethodRepository->findBy(['active' => true]);
 
-        $cart = $cartService->getCart();
-        $countries = Countries::getNames();
-
-        $subtotal = 0;
-        foreach ($cart as $item) {
-            $subtotal += $item['product']->getPrice() * $item['quantity'];
-        }
-
-        $shipping = 5.00;
-
         return $this->render('checkout/index.html.twig', [
-            'cart'     => $cart,
-            'shipping' => $shipping,
-            'countries' => $countries,
-            'paymentMethods' => $paymentMethods,
-            'shippingMethods' => $shippingMethods,
+            'cart'             => $cart,
+            'shipping'         => $shipping,
+            'countries'        => $countries,
+            'paymentMethods'   => $paymentMethods,
+            'shippingMethods'  => $shippingMethods,
+            'form'             => $form->createView(),
         ]);
     }
 
@@ -60,8 +75,16 @@ class CheckoutController extends AbstractController
             $subtotal += $item['product']->getPrice() * $item['quantity'];
         }
 
-        $shippingMethodId = $request->request->get('shippingMethod');
-        $paymentMethodId = $request->request->get('paymentMethod');
+        $form = $this->createForm(CheckoutType::class, null, $this->getCheckoutFormOptions($paymentMethodRepository, $shippingMethodRepository));
+        $form->handleRequest($request);
+
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            $this->addFlash('error', 'Invalid form submission.');
+            return $this->redirectToRoute('checkout');
+        }
+
+        $shippingMethodId = $form->get('shippingMethod')->getData();
+        $paymentMethodId = $form->get('paymentMethod')->getData();
 
         $shippingMethod = $shippingMethodRepository->find($shippingMethodId);
         $paymentMethod = $paymentMethodRepository->find($paymentMethodId);
@@ -73,17 +96,16 @@ class CheckoutController extends AbstractController
 
         $shipping = $shippingMethod->getPrice();
         $total = $subtotal + $shipping;
-
-        $firstName = $request->request->get('firstName');
-        $lastName = $request->request->get('lastName');
+        $firstName = $form->get('firstName')->getData();
+        $lastName = $form->get('lastName')->getData();
         $name = $firstName . ' ' . $lastName;
-        $email = $request->request->get('email');
-        $phone = $request->request->get('phone');
-        $country = $request->request->get('country');
-        $zip = $request->request->get('zip');
-        $region = $request->request->get('region');
-        $city = $request->request->get('city');
-        $street = $request->request->get('streetAddress');
+        $email = $form->get('email')->getData();
+        $phone = $form->get('phone')->getData();
+        $country = $form->get('country')->getData();
+        $zip = $form->get('zip')->getData();
+        $region = $form->get('county')->getData();
+        $city = $form->get('city')->getData();
+        $street = $form->get('streetAddress')->getData();
 
         $entityManager->beginTransaction();
 
@@ -148,8 +170,6 @@ class CheckoutController extends AbstractController
         }
     }
 
-
-
     #[Route('/checkout/success/{orderId}', name: 'checkout_success')]
     public function success(int $orderId, EntityManagerInterface $em)
     {
@@ -162,5 +182,26 @@ class CheckoutController extends AbstractController
         return $this->render('checkout/success.html.twig', [
             'order' => $order,
         ]);
+    }
+
+    private function getCheckoutFormOptions(
+        PaymentMethodRepository $paymentMethodRepository,
+        ShippingMethodRepository $shippingMethodRepository
+    ): array {
+        $countries = Countries::getNames();
+        $paymentMethods = $paymentMethodRepository->findBy(['active' => true]);
+        $shippingMethods = $shippingMethodRepository->findBy(['active' => true]);
+
+        return [
+            'countries' => array_flip($countries),
+            'paymentMethods' => array_combine(
+                array_map(fn($m) => $m->getId(), $paymentMethods),
+                array_map(fn($m) => $m->getName(), $paymentMethods)
+            ),
+            'shippingMethods' => array_combine(
+                array_map(fn($m) => $m->getId(), $shippingMethods),
+                array_map(fn($m) => $m->getName() . ' - $' . number_format($m->getPrice(), 2), $shippingMethods)
+            ),
+        ];
     }
 }
