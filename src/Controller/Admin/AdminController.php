@@ -6,7 +6,7 @@ namespace App\Controller\Admin;
 use App\Entity\Product;
 use App\Entity\Category;
 use App\Entity\Order;
-use App\Entity\User;
+use App\Entity\Customer;
 use App\Entity\PaymentMethod;
 use App\Entity\ShippingMethod;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -31,7 +31,7 @@ class AdminController extends AbstractDashboardController
         // Total counts
         $totalProducts = $this->entityManager->getRepository(Product::class)->count([]);
         $totalOrders = $this->entityManager->getRepository(Order::class)->count([]);
-        $totalUsers = $this->entityManager->getRepository(User::class)->count([]);
+        $totalCustomers = $this->entityManager->getRepository(Customer::class)->count([]);
 
         // Total revenue
         $totalRevenue = (float) $this->entityManager->createQuery(
@@ -41,7 +41,7 @@ class AdminController extends AbstractDashboardController
         return $this->render('admin/dashboard.html.twig', [
             'totalProducts' => $totalProducts,
             'totalOrders' => $totalOrders,
-            'totalUsers' => $totalUsers,
+            'totalCustomers' => $totalCustomers,
             'totalRevenue' => $totalRevenue
         ]);
     }
@@ -49,7 +49,7 @@ class AdminController extends AbstractDashboardController
     public function configureDashboard(): Dashboard
     {
         return Dashboard::new()
-            ->setTitle('<img src="https://www.codewithfaraz.com/favicon.ico" alt="My Store" style="height:32px;margin-right:8px;">Admin Panel');
+            ->setTitle('<img src="/images/logo.png" alt="My Store" style="height:32px;margin-right:8px;">Admin Panel');
     }
 
     public function configureMenuItems(): iterable
@@ -61,7 +61,7 @@ class AdminController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Products', 'fas fa-box', Product::class);
         yield MenuItem::linkToCrud('Categories', 'fas fa-tags', Category::class);
         yield MenuItem::linkToCrud('Orders', 'fas fa-shopping-cart', Order::class);
-        yield MenuItem::linkToCrud('Users', 'fas fa-users', User::class);
+        yield MenuItem::linkToCrud('Customers', 'fas fa-users', Customer::class);
 
         yield MenuItem::linkToCrud('Payment Methods', 'fas fa-credit-card', PaymentMethod::class);
         yield MenuItem::linkToCrud('Shipping Methods', 'fas fa-shipping-fast', ShippingMethod::class);

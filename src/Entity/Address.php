@@ -28,17 +28,17 @@ class Address
     private ?int $postcode = null;
 
     /**
-     * @var Collection<int, User>
+     * @var Collection<int, Customer>
      */
-    #[ORM\ManyToMany(targetEntity: User::class, mappedBy: 'address_id')]
-    private Collection $users;
+    #[ORM\ManyToMany(targetEntity: Customer::class, mappedBy: 'address_id')]
+    private Collection $customers;
 
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $county = null;
 
     public function __construct()
     {
-        $this->users = new ArrayCollection();
+        $this->customers = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -95,27 +95,27 @@ class Address
     }
 
     /**
-     * @return Collection<int, User>
+     * @return Collection<int, Customer>
      */
-    public function getUsers(): Collection
+    public function getCustomers(): Collection
     {
-        return $this->users;
+        return $this->customers;
     }
 
-    public function addUser(User $user): static
+    public function addCustomer(Customer $customer): static
     {
-        if (!$this->users->contains($user)) {
-            $this->users->add($user);
-            $user->addAddressId($this);
+        if (!$this->customers->contains($customer)) {
+            $this->customers->add($customer);
+            $customer->addAddressId($this);
         }
 
         return $this;
     }
 
-    public function removeUser(User $user): static
+    public function removeCustomer(Customer $customer): static
     {
-        if ($this->users->removeElement($user)) {
-            $user->removeAddressId($this);
+        if ($this->customers->removeElement($customer)) {
+            $customer->removeAddressId($this);
         }
 
         return $this;

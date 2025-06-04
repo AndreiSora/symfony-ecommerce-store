@@ -2,13 +2,13 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
+use App\Repository\CustomerRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
-#[ORM\Entity(repositoryClass: UserRepository::class)]
-class User
+#[ORM\Entity(repositoryClass: CustomerRepository::class)]
+class Customer
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -27,13 +27,13 @@ class User
     /**
      * @var Collection<int, Address>
      */
-    #[ORM\ManyToMany(targetEntity: Address::class, inversedBy: 'users')]
+    #[ORM\ManyToMany(targetEntity: Address::class, inversedBy: 'customers')]
     private Collection $address_id;
 
     /**
      * @var Collection<int, Order>
      */
-    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'user_address')]
+    #[ORM\OneToMany(targetEntity: Order::class, mappedBy: 'customer_address')]
     private Collection $orders;
 
     public function __construct()
@@ -119,7 +119,7 @@ class User
     {
         if (!$this->orders->contains($order)) {
             $this->orders->add($order);
-            $order->setUserAddress($this);
+            $order->setCustomerAddress($this);
         }
 
         return $this;
@@ -129,8 +129,8 @@ class User
     {
         if ($this->orders->removeElement($order)) {
             // set the owning side to null (unless already changed)
-            if ($order->getUserAddress() === $this) {
-                $order->setUserAddress(null);
+            if ($order->getCustomerAddress() === $this) {
+                $order->setCustomerAddress(null);
             }
         }
 
