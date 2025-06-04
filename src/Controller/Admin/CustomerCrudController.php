@@ -1,20 +1,19 @@
 <?php
-// src/Controller/Admin/UserCrudController.php
 
 namespace App\Controller\Admin;
 
-use App\Entity\User;
+use App\Entity\Customer;
 use App\Form\AddressType;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractCrudController;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\CollectionField;
 
-class UserCrudController extends AbstractCrudController
+class CustomerCrudController extends AbstractCrudController
 {
     public static function getEntityFqcn(): string
     {
-        return User::class;
+        return Customer::class;
     }
 
     public function configureFields(string $pageName): iterable

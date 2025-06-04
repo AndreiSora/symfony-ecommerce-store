@@ -42,11 +42,11 @@ class OrderCrudController extends AbstractCrudController
     {
         yield IdField::new('id')->onlyOnIndex();
 
-        yield AssociationField::new('user_address', 'Customer')->onlyOnIndex();
-        yield AssociationField::new('user_address', 'Customer')->onlyOnDetail();
+        yield AssociationField::new('customer_address', 'Customer')->onlyOnIndex();
+        yield AssociationField::new('customer_address', 'Customer')->onlyOnDetail();
 
 
-        yield CollectionField::new('userAddress.addressId', 'Addresses')
+        yield CollectionField::new('customerAddress.addressId', 'Addresses')
             ->setEntryType(AddressType::class)
             ->onlyOnDetail();
 

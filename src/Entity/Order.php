@@ -17,7 +17,7 @@ class Order
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $user_name = null;
+    private ?string $customer_name = null;
 
     /**
      * @var Collection<int, Product>
@@ -27,7 +27,7 @@ class Order
 
     #[ORM\ManyToOne(inversedBy: 'orders')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?User $user_address = null;
+    private ?Customer $customer_address = null;
 
     #[ORM\Column(nullable: true)]
     private ?float $shipping_tax = null;
@@ -65,14 +65,14 @@ class Order
         return $this->id;
     }
 
-    public function getUserName(): ?string
+    public function getCustomerName(): ?string
     {
-        return $this->user_name;
+        return $this->customer_name;
     }
 
-    public function setUserName(string $user_name): static
+    public function setCustomerName(string $customer_name): static
     {
-        $this->user_name = $user_name;
+        $this->customer_name = $customer_name;
 
         return $this;
     }
@@ -101,14 +101,14 @@ class Order
         return $this;
     }
 
-    public function getUserAddress(): ?User
+    public function getCustomerAddress(): ?Customer
     {
-        return $this->user_address;
+        return $this->customer_address;
     }
 
-    public function setUserAddress(?User $user_address): static
+    public function setCustomerAddress(?Customer $customer_address): static
     {
-        $this->user_address = $user_address;
+        $this->customer_address = $customer_address;
 
         return $this;
     }

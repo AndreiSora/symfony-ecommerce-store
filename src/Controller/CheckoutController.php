@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Address;
-use App\Entity\User;
+use App\Entity\Customer;
 use App\Entity\Order;
 use App\Entity\OrderItem;
 use App\Service\CartService;
@@ -118,16 +118,16 @@ class CheckoutController extends AbstractController
             $address->setStreet($street);
             $entityManager->persist($address);
 
-            $user = new User();
-            $user->setName($name);
-            $user->setEmail($email);
-            $user->setPhone($phone);
-            $user->addAddressId($address);
-            $entityManager->persist($user);
+            $customer = new Customer();
+            $customer->setName($name);
+            $customer->setEmail($email);
+            $customer->setPhone($phone);
+            $customer->addAddressId($address);
+            $entityManager->persist($customer);
 
             $order = new Order();
-            $order->setUserName($name);
-            $order->setUserAddress($user);
+            $order->setCustomerName($name);
+            $order->setCustomerAddress($customer);
             $order->setShippingTax($shipping);
             $order->setPaymentMethod($paymentMethod->getName());
             $order->setShippingMethod($shippingMethod->getName());
